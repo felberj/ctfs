@@ -1,0 +1,7 @@
+CommitMsg:
+  HardTabs:
+    enabled: true
+
+PrePush:
+  GitLfs:
+    enabled: true
