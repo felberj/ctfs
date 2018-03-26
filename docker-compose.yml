@@ -1,0 +1,77 @@
+version: '3.3'
+services:
+  
+  hello:
+    image: glarsen/apex-misc-hello:stable
+    networks:
+      - warzone
+    ports:
+      - "8000:8000"
+    environment:
+      - APEX_ENV=production
+      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
+    secrets:
+      - source: hello-flag
+        target: flag
+    deploy:
+      restart_policy:
+        condition: any
+
+  ret2lost:
+    image: glarsen/apex-pwn-ret2lost:stable
+    networks:
+      - warzone
+    ports:
+      - "8100:8000"
+    secrets:
+      - source: ret2lost-flag
+        target: flag
+    deploy:
+      restart_policy:
+        condition: any
+
+  chosen:
+    image: glarsen/apex-crypto-chosen:stable
+    networks:
+      - warzone
+    ports:
+      - "8200:8000"
+    environment:
+      - APEX_ENV=production
+      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
+    secrets:
+      - source: chosen-key
+        target: key
+    deploy:
+      restart_policy:
+        condition: any
+  
+  testbed:
+    image: glarsen/apex-misc-hello:experimental
+    networks:
+      - warzone
+    ports:
+      - "8999:8000"
+    environment:
+      - APEX_ENV=staging
+      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
+    secrets:
+      - source: testbed-flag
+        target: flag
+    deploy:
+      restart_policy:
+        condition: any
+
+networks:
+  warzone:
+
+secrets:
+  testbed-flag:
+    file: ./flags/testbed-flag.txt
+  hello-flag:
+    file: ./flags/misc/hello-flag.txt
+  ret2lost-flag:
+    file: ./flags/pwn/ret2lost-flag.txt
+  chosen-key:
+    file: ./keys/crypto/chosen-key.txt
+
