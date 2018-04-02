@@ -4,16 +4,18 @@ services:
   hello:
     image: glarsen/apex-misc-hello:stable
     networks:
-      - warzone
+      - dmz
     ports:
       - "8000:8000"
     environment:
       - APEX_ENV=production
-      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
     secrets:
       - source: hello-flag
         target: flag
     deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
       restart_policy:
         condition: any
 
@@ -27,43 +29,53 @@ services:
       - source: ret2lost-flag
         target: flag
     deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
       restart_policy:
         condition: any
 
   chosen:
     image: glarsen/apex-crypto-chosen:stable
     networks:
-      - warzone
+      - dmz
     ports:
       - "8200:8000"
     environment:
       - APEX_ENV=production
-      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
     secrets:
       - source: chosen-key
         target: key
     deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
       restart_policy:
         condition: any
   
   testbed:
     image: glarsen/apex-misc-hello:experimental
     networks:
-      - warzone
+      - staging
     ports:
       - "8999:8000"
     environment:
       - APEX_ENV=staging
-      - SENTRY_DSN=FILL_IN_OR_DELETE_LINE
     secrets:
       - source: testbed-flag
         target: flag
     deploy:
+      replicas: 1
       restart_policy:
         condition: any
 
 networks:
+  dmz:
+    driver: overlay
+  staging:
+    driver: overlay
   warzone:
+    driver: overlay
 
 secrets:
   testbed-flag:
